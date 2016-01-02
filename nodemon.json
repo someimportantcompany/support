@@ -1,0 +1,11 @@
+{
+  "env": {
+    "DEBUG": "Support:*",
+    "NODE_ENV": "development"
+  },
+  "exec": "node app/server.js",
+  "ext": "js json nunjucks nunj yml",
+  "watch": [
+    "app"
+  ]
+}
