@@ -1,4 +1,5 @@
 var config = require('app/config');
+var debug = require('debug')('Support:Server');
 var EventEmitter = require('events').EventEmitter;
 var express = require('express');
 var extend = require('deep-extend');
@@ -29,6 +30,8 @@ Support.prototype.listen = function (callback) {
   // if (this.listeners('error').length === 0) this.on('error', function defaultErrorHandler(e) {
   //   throw e;
   // });s
+
+  debug(config);
 
   var app = express();
   var server = http.createServer(app);

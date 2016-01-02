@@ -1,11 +1,13 @@
 default:
   api:
+    keys:
+  http:
     headers:
       X-Powered-By: Support
       X-Version: 0.0.1
-  http:
     host: 127.0.0.1
     port: 3000
+  nunjucks:
   redis:
     host: 127.0.0.1
     port: 6379

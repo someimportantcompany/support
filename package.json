@@ -4,12 +4,14 @@
   "description": "Supporting staff since 2016",
   "main": "app/index.js",
   "scripts": {
-    "lint": "jshint .",
     "checkStyle": "jscs .",
-    "postinstall": "rm -rf node_modules/app && ln -s ../app node_modules/app",
+    "cron": "node example.js --cron",
+    "lint": "jshint .",
     "pretest": "npm run-script lint && npm run-script checkStyle",
-    "test": "istanbul cover _mocha -- -r should test/*.test.js",
-    "posttest": "istanbul check-coverage"
+    "postinstall": "rm -rf node_modules/app && ln -s ../app node_modules/app",
+    "posttest": "istanbul check-coverage",
+    "start": "node example.js",
+    "test": "istanbul cover _mocha -- -r should test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -18,10 +20,14 @@
   "author": "James D <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
   "dependencies": {
+    "async": "^1.5.0",
     "body-parser": "^1.14.2",
+    "debug": "^2.2.0",
     "deep-extend": "^0.4.0",
     "express": "^4.13.3",
+    "lodash": "^3.10.1",
     "node-yaml-config": "0.0.3",
+    "nunjucks": "^2.2.0",
     "response-time": "^2.3.1"
   }
 }
