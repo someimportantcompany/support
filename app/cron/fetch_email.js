@@ -1,7 +1,19 @@
+var async = require('async');
 var config = require('app/config');
 var debug = require('debug')('Support:Cron:IMAP');
 var inbox = require('inbox');
 var MailParser = require('mailparser').MailParser;
+
+var PARSER_OPTS = {
+  streamAttachments: true,
+  defaultCharset: 'utf8',
+  showAttachmentLinks: true
+};
+var SEARCH_QUERY = {
+  not: {
+    seen: true
+  }
+};
 
 module.exports = function (callback) {
   var client = inbox.createConnection(false, config.imap.host, {
@@ -38,21 +50,42 @@ module.exports = function (callback) {
 
       debug(mailbox);
 
-      client.listMessages(0, 10, function (err, messages) {
+      // client.listMessages(0, 10, function (err, messages) {
+      //   if (err) {
+      //     client.close();
+      //     return callback && callback(err);
+      //   }
+      //
+      //   console.log(JSON.stringify(messages, null, 2));
+      //
+      //   var parser = new MailParser(PARSER_OPTS);
+      //   parser.on('end', function (email) {
+      //     console.log(JSON.stringify(email, null, 2));
+      //   });
+      //   client.createMessageStream(1).pipe(parser).on('end', function () {
+      //     //client.close();
+      //     //callback && callback();
+      //   });
+      // });
+
+      client.search(SEARCH_QUERY, true, function (err, uids) {
         if (err) {
           client.close();
           return callback && callback(err);
         }
 
-        console.log(JSON.stringify(messages, null, 2));
+        debug(uids);
 
-        var parser = new MailParser();
-        parser.on('end', function (email) {
-          console.log(JSON.stringify(email, null, 2));
-        });
-        client.createMessageStream(1).pipe(parser).on('end', function () {
-          client.close();
-          callback && callback();
+        async.each(uids, function (uid, next) {
+          var parser = new MailParser(PARSER_OPTS);
+          parser.on('end', function (email) {
+            console.log(JSON.stringify(email, null, 2));
+          });
+
+          client.createMessageStream(uid).pipe(parser).on('end', next);
+        }, function () {
+          // client.close();
+          // callback && callback(err);
         });
       });
     });
@@ -64,7 +97,7 @@ module.exports = function (callback) {
 
   client.on("new", function (message) {
     console.log('NEW EMAIL!');
-    var parser = new MailParser();
+    var parser = new MailParser(PARSER_OPTS);
     parser.on('end', function (email) {
       console.log(JSON.stringify(email, null, 2));
     });
