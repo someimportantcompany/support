@@ -18,6 +18,7 @@ var Support = function () {
 
 Support.prototype.config = function (conf) {
   extend(config, conf);
+  debug(config);
   return this;
 };
 
@@ -36,8 +37,6 @@ Support.prototype.listen = function (callback) {
   // if (this.listeners('error').length === 0) this.on('error', function defaultErrorHandler(e) {
   //   throw e;
   // });s
-
-  debug(config);
 
   var app = express();
   var server = http.createServer(app);

@@ -18,6 +18,11 @@ support.config({
     host: '127.0.0.1',
     port: 3000
   },
+  imap: {
+    host: 'imap.gmail.com',
+    username: process.env.IMAP_SUPPORT_USER,
+    password: process.env.IMAP_SUPPORT_PASS
+  },
   // nunjucks: {
   //   filters: [
   //     path.join(__dirname, 'filters')
@@ -25,4 +30,11 @@ support.config({
   // }
 });
 
-support.listen();
+if (false) support.listen();
+else {
+  require('app/cron/fetch_email')(function (err) {
+    if (err) console.error(err.stack || err);
+    else console.log('Finished!');
+    process.exit(err ? 1 : 0);
+  });
+}
