@@ -5,7 +5,9 @@
   },
   "exec": "node example/server.js",
   "ext": "js json nunjucks yml",
-  "watch": [
-    "app"
+  "ignore": [
+    ".git",
+    "coverage",
+    "node_modules"
   ]
 }

@@ -8,12 +8,11 @@ var nunjucks = require('app/nunjucks');
 var path = require('path');
 
 var Support = function () {
-  // Like, something needs to happen on "boot", right?
+  config.nunjucks = config.nunjucks || {};
 };
 
 Support.prototype.config = function (conf) {
   extend(config, conf);
-  debug(config);
   return this;
 };
 
@@ -29,9 +28,11 @@ Support.prototype.listen = function (callback) {
   if (IS_RUNNING) return callback && callback(new Error('You cannot start listening twice'));
   IS_RUNNING = true;
 
-  // if (this.listeners('error').length === 0) this.on('error', function defaultErrorHandler(e) {
+  // if (this.listenerCount('error') === 0) this.on('error', function defaultErrorHandler(e) {
   //   throw e;
   // });s
+
+  debug(config);
 
   var app = express();
   var server = http.createServer(app);
@@ -60,6 +61,14 @@ Support.prototype.listen = function (callback) {
     events.emit('init', config);
     callback && callback();
   });
+};
+
+Support.prototype.plugin = function (plugin) {
+  if (plugin.listeners('init').length) {
+    events.on('init', function () {
+      plugin.emit.apply(plugin, [ 'init' ].concat(Array.prototype.slice.call(arguments)));
+    });
+  }
 };
 
 module.exports = new Support();

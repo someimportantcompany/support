@@ -1,5 +1,5 @@
 // var path = require('path');
-var support = require('../support'); // IRL it'll be "support"
+var support = require('../support'); // IRL it'll be 'support'
 
 support.config({
   api: {
@@ -30,11 +30,6 @@ support.config({
   // }
 });
 
-if (false) support.listen();
-else {
-  require('app/cron/fetch_email')(function (err) {
-    if (err) console.error(err.stack || err);
-    else console.log('Finished!');
-    process.exit(err ? 1 : 0);
-  });
-}
+support.plugin(require('../plugins/imap')); // IRL it'll be 'support/plugins/imap'
+
+support.listen();
