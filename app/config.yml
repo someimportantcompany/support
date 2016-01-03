@@ -1,6 +1,5 @@
 default:
   api:
-    keys:
   http:
     headers:
       X-Powered-By: Support
@@ -11,3 +10,7 @@ default:
   redis:
     host: 127.0.0.1
     port: 6379
+  rethinkdb:
+    db: support
+    host: 127.0.0.1
+    port: 28015

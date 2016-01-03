@@ -13,11 +13,15 @@
     "start": "node example.js",
     "test": "istanbul cover _mocha -- -r should test/*.test.js"
   },
+  "files": [
+    "app"
+  ],
   "repository": {
     "type": "git",
     "url": "github.com:someimportantcompany/support"
   },
   "author": "James D <james@jdrydn.com> (https://jdrydn.com)",
+  "homepage": "http://someimportantcompany.com/support",
   "license": "MIT",
   "dependencies": {
     "async": "^1.5.0",
@@ -26,8 +30,10 @@
     "deep-extend": "^0.4.0",
     "express": "^4.13.3",
     "lodash": "^3.10.1",
+    "node-sass-middleware": "^0.9.7",
     "node-yaml-config": "0.0.3",
     "nunjucks": "^2.2.0",
-    "response-time": "^2.3.1"
+    "response-time": "^2.3.1",
+    "rethinkdbdash": "^2.2.15"
   }
 }

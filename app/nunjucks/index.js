@@ -25,12 +25,22 @@ module.exports = function setNunjucks(app, opts) {
   });
 
   [ 'extensions', 'filters' ].forEach(function (type) {
+    var count = 0;
     (opts[type] || []).forEach(function (folder) {
-      var count = 0;
-      fs.readdirSync(path.join(folder)).sort().forEach(function (file) {
+      var files = [];
+      try {
+        files = fs.readdirSync(path.join(folder));
+      }
+      catch (e) {
+        if (e.code && e.code === 'ENOENT') console.warn('WARNING: Folder at "' + folder + '" does not exist');
+        else console.log(e.stack || e);
+        return;
+      }
+
+      files.sort().forEach(function (file) {
         if (path.extname(file) !== '.js') return;
 
-        var moduleFn = require(path.join(folder.concat([ file ])));
+        var moduleFn = require(path.join(folder, file));
 
         switch (type) {
           case 'extensions':
@@ -47,8 +57,8 @@ module.exports = function setNunjucks(app, opts) {
             throw new Error('Unknown type "' + type + '"');
         }
       });
-      debug('Loaded ' + count + ' ' + type);
     });
+    debug('Loaded ' + count + ' ' + type);
   });
 
   app.set('view engine', 'nunjucks');

@@ -13,7 +13,7 @@ if (API_KEYS.length === 0) {
 }
 
 auth.verifyClient = function (req, res, next) {
-  if (API_KEYS.length === 0) return next();
+  if (API_CLIENTS.length === 0) return next();
 };
 
 auth.verifyKey = function (req, res, next) {

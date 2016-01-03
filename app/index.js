@@ -1,13 +1,13 @@
 var config = require('app/config');
 var debug = require('debug')('Support:Server');
-var EventEmitter = require('events').EventEmitter;
+var events = require('app/lib/events');
 var express = require('express');
 var extend = require('deep-extend');
 var http = require('http');
-var util = require('util');
+var nunjucks = require('app/nunjucks');
+var path = require('path');
 
 var Support = function () {
-  EventEmitter.call(this);
   extend(config, {
     nunjucks: {
       extensions: [],
@@ -15,11 +15,17 @@ var Support = function () {
     }
   });
 };
-util.inherits(Support, EventEmitter);
 
 Support.prototype.config = function (conf) {
   extend(config, conf);
   return this;
+};
+
+/**
+ * Map the events "on" function so developers can attach applications to our events!
+ */
+Support.prototype.on = function () {
+  return events.on.apply(events, arguments);
 };
 
 var IS_RUNNING = false;
@@ -36,16 +42,23 @@ Support.prototype.listen = function (callback) {
   var app = express();
   var server = http.createServer(app);
 
+  nunjucks(app, {
+    extensions: config.nunjucks.extensions,
+    filters: config.nunjucks.filters,
+    views: [ path.join(__dirname, 'templates') ].concat(config.nunjucks.views || [])
+  });
+
   server.on('error', function (e) {
-    this.emit('error', e);
-  }.bind(this));
+    events.emit('error', e);
+  });
 
   server.on('listening', function () {
-    this.emit('listening');
-  }.bind(this));
+    events.emit('listening');
+  });
 
   app.disable('x-powered-by');
   app.request.support = app.response.support = app.support = this;
+  app.use(express.static(path.join(__dirname, 'public')));
   app.use(require('app/routes'));
 
   server.listen(config.http.port, config.http.host, function () {
