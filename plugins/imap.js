@@ -24,8 +24,7 @@ imap.on('init', function connectImap(config) {
   ));
 
   var self = this;
-
-  self.client = inbox.createConnection(false, config.imap.host, {
+  var client = this.client = inbox.createConnection(false, config.imap.host, {
     secureConnection: true,
     auth: {
       user: config.imap.username,
@@ -33,19 +32,19 @@ imap.on('init', function connectImap(config) {
     }
   });
 
-  self.client.on('error', function (e) {
+  client.on('error', function (e) {
     self.emit('error', e);
   });
 
-  self.client.on('connect', function () {
+  client.on('connect', function () {
     debug('IMAP connected');
 
-    self.client.openMailbox('INBOX', function (err, mailbox) {
+    client.openMailbox('INBOX', function (err, mailbox) {
       if (err) return self.emit('error', err);
 
       debug(mailbox);
 
-      self.client.search(SEARCH_QUERY, true, function (err, uids) {
+      client.search(SEARCH_QUERY, true, function (err, uids) {
         if (err) return self.emit('error', err);
 
         debug(uids);
@@ -56,7 +55,7 @@ imap.on('init', function connectImap(config) {
             console.log(JSON.stringify(email, null, 2));
           });
 
-          self.client.createMessageStream(uid).pipe(parser).on('end', next);
+          client.createMessageStream(uid).pipe(parser).on('end', next);
         });
       });
     });
