@@ -2,7 +2,7 @@
   "name": "someimportantcompany-support",
   "version": "0.0.1",
   "description": "Supporting staff since 2016",
-  "main": "app/index.js",
+  "main": "support.js",
   "scripts": {
     "checkStyle": "jscs .",
     "cron": "node example.js --cron",

@@ -8,12 +8,7 @@ var nunjucks = require('app/nunjucks');
 var path = require('path');
 
 var Support = function () {
-  extend(config, {
-    nunjucks: {
-      extensions: [],
-      filters: []
-    }
-  });
+  // Like, something needs to happen on "boot", right?
 };
 
 Support.prototype.config = function (conf) {
@@ -56,12 +51,13 @@ Support.prototype.listen = function (callback) {
   });
 
   app.disable('x-powered-by');
-  app.request.support = app.response.support = app.support = this;
+  app.request.support = app.response.support = this;
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(require('app/routes'));
 
   server.listen(config.http.port, config.http.host, function () {
     console.log('Support listening on %s:%d', config.http.host, config.http.port);
+    events.emit('init', config);
     callback && callback();
   });
 };

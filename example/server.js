@@ -1,5 +1,5 @@
 // var path = require('path');
-var support = require('app'); // But for you, it'll be "support"
+var support = require('../support'); // IRL it'll be "support"
 
 support.config({
   api: {

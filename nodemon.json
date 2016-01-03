@@ -3,7 +3,7 @@
     "DEBUG": "Support:*",
     "NODE_ENV": "development"
   },
-  "exec": "node example.js",
+  "exec": "node example/server.js",
   "ext": "js json nunjucks yml",
   "watch": [
     "app"

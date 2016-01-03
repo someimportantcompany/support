@@ -97,6 +97,7 @@ module.exports = function (callback) {
 
   client.on("new", function (message) {
     console.log('NEW EMAIL!');
+
     var parser = new MailParser(PARSER_OPTS);
     parser.on('end', function (email) {
       console.log(JSON.stringify(email, null, 2));
