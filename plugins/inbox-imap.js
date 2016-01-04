@@ -3,7 +3,7 @@ var inbox = require('inbox');
 var MailParser = require('mailparser').MailParser;
 var SupportPlugin = require('../plugin');
 
-var imap = module.exports = new SupportPlugin();
+var imap = module.exports = new SupportPlugin('Inbox IMAP');
 
 var PARSER_OPTS = {
   streamAttachments: true,

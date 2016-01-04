@@ -30,6 +30,6 @@ support.config({
   // }
 });
 
-support.plugin(require('../plugins/imap')); // IRL it'll be 'support/plugins/imap'
+support.plugin(require('../plugins/inbox-imap')); // IRL it'll be 'support/plugins/inbox-imap'
 
 support.listen();
