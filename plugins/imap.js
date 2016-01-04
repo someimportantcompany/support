@@ -1,4 +1,3 @@
-var async = require('async');
 var debug = require('debug')('Support:Plugins:IMAP');
 var inbox = require('inbox');
 var MailParser = require('mailparser').MailParser;
@@ -32,34 +31,49 @@ imap.on('init', function connectImap(config) {
     }
   });
 
-  client.on('error', function (e) {
-    self.emit('error', e);
-  });
-
   client.on('connect', function () {
     debug('IMAP connected');
 
     client.openMailbox('INBOX', function (err, mailbox) {
       if (err) return self.emit('error', err);
 
-      debug(mailbox);
+      debug('mailbox', mailbox);
 
       client.search(SEARCH_QUERY, true, function (err, uids) {
         if (err) return self.emit('error', err);
 
-        debug(uids);
-
-        async.each(uids, function (uid, next) {
-          var parser = new MailParser(PARSER_OPTS);
-          parser.on('end', function (email) {
-            console.log(JSON.stringify(email, null, 2));
-          });
-
-          client.createMessageStream(uid).pipe(parser).on('end', next);
+        debug('uids', uids);
+        uids.forEach(function (uid) {
+          self.emit('parse-uid', uid);
         });
       });
     });
   });
 
-  self.client.connect();
+  client.on('error', function (e) {
+    self.emit('error', e);
+  });
+
+  client.on('new', function (message) {
+    debug('new-email', message);
+    self.emit('parse-uid', message.UID);
+  });
+
+  client.connect();
+});
+
+imap.on('parse-uid', function parseUid(uid) {
+  if (!this.client) this.emit('error', new Error('Client has not been initialised'));
+
+  var client = this.client;
+  var parser = new MailParser(PARSER_OPTS);
+  parser.on('end', function (email) {
+    this.emit('new-email', email);
+  }.bind(this));
+
+  client.createMessageStream(uid).pipe(parser);
+});
+
+imap.on('new-email', function newEmail(email) {
+  console.log(JSON.stringify(email, null, 2));
 });
